@@ -1,0 +1,61 @@
+    {% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-clock-history me-2"></i>My Service History</h2>
+        <a href="{% url 'service_list' %}" class="btn btn-outline-primary rounded-pill">Book New Service</a>
+    </div>
+
+    <div class="row">
+        {% for record in history %}
+        <div class="col-md-12 mb-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <h5 class="fw-bold mb-1">{{ record.service.title }}</h5>
+                        <small class="text-muted">Garage: {{ record.service.provider.username }}</small>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="text-secondary">
+                            <i class="bi bi-calendar3 me-2"></i>{{ record.booking_date|date:"D, d M Y" }}
+                        </div>
+                        <div class="text-secondary">
+                            <i class="bi bi-alarm me-2"></i>{{ record.booking_date|time:"H:i" }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        {% if record.status == 'completed' %}
+                            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill w-100">Completed</span>
+                        {% elif record.status == 'in_progress' %}
+                            <span class="badge bg-warning-subtle text-warning px-3 py-2 rounded-pill w-100">In Progress</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark px-3 py-2 rounded-pill w-100">Pending</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3 text-end">
+                        {% if record.is_paid %}
+                            <a href="{% url 'download_invoice' record.id %}" class="btn btn-sm btn-light text-primary fw-bold me-2">
+                                <i class="bi bi-file-earmark-pdf"></i> Invoice
+                            </a>
+                        {% endif %}
+                        
+                        {% if record.status == 'completed' %}
+                            <a href="{% url 'leave_review' record.id %}" class="btn btn-sm btn-primary rounded-pill px-3">Review</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x display-1 text-light"></i>
+            <p class="text-muted mt-3">You haven't booked any services yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

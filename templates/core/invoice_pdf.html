@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding: 100px; text-align: center; background: #0f172a; color: white; min-height: 100vh;">
+    <h1 style="color: #2ecc71;">Payment Successful!</h1>
+    <p>Transaction ID: {{ payment_id }}</p>
+    <p>Your service is now <strong>In Progress</strong>.</p>
+    <br>
+    <a href="/" class="btn-home">
+        <i class="bi bi-house-door-fill me-2"></i> Back to Home
+    </a>
+    <a href="{% url 'download_invoice' booking.id %}" class="btn btn-outline-info rounded-pill px-4 ms-2">
+        <i class="bi bi-file-earmark-pdf-fill me-2"></i> Download Invoice
+    </a>
+</div>
+{% endblock %}

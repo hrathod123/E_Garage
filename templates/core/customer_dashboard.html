@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">My Active Bookings</h2>
+            <p class="text-muted">Track and manage your vehicle services</p>
+        </div>
+        <a href="{% url 'service_list' %}" class="btn btn-primary rounded-pill px-4">Book New Service</a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3">
+                <small class="text-muted fw-bold text-uppercase">Total Spent</small>
+                <h3 class="text-success fw-bold">₹{{ total_spent|default:"0" }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for booking in bookings %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 overflow-hidden" style="border-radius: 15px;">
+                <div class="position-absolute top-0 end-0 m-3">
+                    {% if booking.status == 'completed' %}
+                        <span class="badge bg-success rounded-pill">Completed</span>
+                    {% elif booking.status == 'pending' %}
+                        <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                    {% else %}
+                        <span class="badge bg-primary rounded-pill">In Progress</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-1">{{ booking.service.title }}</h5>
+                    <p class="text-muted small mb-3">Provided by: {{ booking.service.provider.username }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="h4 text-primary fw-bold mb-0">₹{{ booking.service.price }}</span>
+                        <span class="small text-muted"><i class="bi bi-calendar"></i> {{ booking.booking_date|date:"M d, Y" }}</span>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <div class="d-grid gap-2">
+                        {% if not booking.is_paid %}
+                            <a href="{% url 'initiate_payment' booking.id %}" class="btn btn-outline-primary btn-sm rounded-pill">Pay Now</a>
+                        {% else %}
+                            <a href="{% url 'download_invoice' booking.id %}" class="btn btn-outline-dark btn-sm rounded-pill">View Invoice</a>
+                        {% endif %}
+                        <a href="{% url 'leave_review' booking.id %}" class="btn btn-link btn-sm text-decoration-none text-muted">Leave Feedback</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" width="100" class="mb-3 opacity-50">
+            <h4 class="text-muted">No bookings found</h4>
+            <p>Ready to give your car some love?</p>
+            <a href="{% url 'service_list' %}" class="btn btn-primary">Browse Services</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

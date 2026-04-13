@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+/* REMOVE NAVBAR ONLY ON LOGIN PAGE */
+.navbar{
+    display:none !important;
+}
+
+
+/* ---------- FULL PAGE BACKGROUND ---------- */
+
+.auth-wrapper{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100vh;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)),
+    url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2000&q=80');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* ---------- GLASS LOGIN CARD ---------- */
+
+.login-card{
+
+    width:100%;
+    max-width:420px;
+
+    padding:45px 40px;
+
+    background:rgba(255,255,255,0.08);
+
+    border-radius:24px;
+
+    backdrop-filter: blur(18px);
+
+    border:1px solid rgba(255,255,255,0.18);
+
+    box-shadow:0 25px 60px rgba(0,0,0,0.4);
+
+    text-align:center;
+
+    transition:0.3s;
+}
+
+.login-card:hover{
+    transform:translateY(-5px);
+}
+
+/* ---------- TITLE ---------- */
+
+.login-card h2{
+    color:white;
+    font-size:2rem;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.subtitle{
+    color:rgba(255,255,255,0.7);
+    font-size:0.9rem;
+    margin-bottom:30px;
+}
+
+/* ---------- FORM GROUP ---------- */
+
+.form-group{
+    position:relative;
+    margin-bottom:22px;
+}
+
+/* ---------- INPUT ICON ---------- */
+
+.form-group i{
+
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+
+    color:rgba(255,255,255,0.6);
+    font-size:15px;
+}
+
+/* ---------- INPUT FIELD ---------- */
+
+.form-control{
+
+    width:100%;
+    height:50px;
+
+    padding-left:42px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,0.25);
+
+    background:rgba(255,255,255,0.12);
+
+    color:white;
+
+    font-size:14px;
+
+    outline:none;
+
+    transition:0.3s;
+}
+
+/* Placeholder */
+
+.form-control::placeholder{
+    color:rgba(255,255,255,0.55);
+}
+
+/* Focus */
+
+.form-control:focus{
+
+    border-color:#2b7cff;
+
+    background:rgba(255,255,255,0.18);
+
+    box-shadow:0 0 0 3px rgba(43,124,255,0.25);
+}
+
+/* ---------- LOGIN BUTTON ---------- */
+
+.btn-login{
+
+    width:100%;
+
+    height:52px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#1e6bff,#0047b3);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.btn-login:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 25px rgba(30,107,255,0.4);
+}
+
+/* ---------- FOOTER ---------- */
+
+.auth-footer{
+
+    margin-top:25px;
+
+    font-size:14px;
+
+    color:rgba(255,255,255,0.7);
+}
+
+.auth-footer a{
+
+    color:#2b7cff;
+
+    font-weight:600;
+
+    text-decoration:none;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:480px){
+
+.login-card{
+padding:35px 25px;
+}
+
+}
+
+</style>
+
+
+<div class="auth-wrapper">
+
+<div class="login-card">
+
+<h2>E-Garage</h2>
+<p class="subtitle">Premium Vehicle Care Access</p>
+
+<form method="post">
+
+{% csrf_token %}
+
+<div class="form-group">
+<i class="fa fa-user"></i>
+<input type="text" name="username" class="form-control" placeholder="Username">
+</div>
+
+<div class="form-group">
+<i class="fa fa-lock"></i>
+<input type="password" name="password" class="form-control" placeholder="Password">
+</div>
+
+<button type="submit" class="btn-login">
+SIGN IN
+</button>
+
+</form>
+
+<div class="auth-footer">
+Don't have an account? 
+<a href="{% url 'signup' %}">Register Now</a>
+</div>
+
+</div>
+</div>
+
+{% endblock %}

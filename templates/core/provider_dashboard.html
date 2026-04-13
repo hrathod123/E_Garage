@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+
+body {
+    background: #07080a;
+    color: #f9fafb; /* brighter white */
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard {
+    padding: 20px;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.sub-text {
+    color: #cbd5e1; /* improved readability */
+    font-size: 14px;
+}
+
+/* KPI CARD */
+.kpi-card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.kpi-card small {
+    color: #cbd5e1;
+}
+
+.kpi-card h3 {
+    color: #ffffff;
+}
+
+/* GLASS CARD */
+.glass-card {
+    background: rgba(255,255,255,0.04);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* INPUT */
+.form-control, .form-select {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ffffff;
+}
+
+.form-control::placeholder {
+    color: #cbd5e1;
+}
+
+/* ================= TABLE ================= */
+
+.table-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #f1f5f9;
+}
+
+.custom-table thead {
+    background: rgba(255,255,255,0.08);
+}
+
+.custom-table th {
+    padding: 16px;
+    color: #e2e8f0;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+.custom-table td {
+    padding: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.custom-table tbody tr:hover {
+    background: rgba(13,110,253,0.12);
+    transform: scale(1.01);
+}
+
+/* CUSTOMER */
+.customer-name {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.customer-phone {
+    font-size: 12px;
+    color: #cbd5e1;
+}
+
+/* BADGES */
+.badge-paid {
+    background: rgba(34,197,94,0.2);
+    color: #4ade80;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.badge-unpaid {
+    background: rgba(239,68,68,0.2);
+    color: #f87171;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+/* STATUS */
+.status-select {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* BUTTON */
+.btn-contact {
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: #fff;
+    transition: 0.3s;
+}
+
+.btn-contact:hover {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* ================= GRAPH ================= */
+
+.chart-container {
+    height: 300px;
+}
+
+h5 {
+    color: #ffffff;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+    .custom-table thead {
+        display: none;
+    }
+
+    .custom-table, 
+    .custom-table tbody, 
+    .custom-table tr, 
+    .custom-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .custom-table tr {
+        margin-bottom: 15px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .custom-table td {
+        text-align: right;
+        padding: 10px;
+        position: relative;
+    }
+
+    .custom-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        color: #cbd5e1;
+        font-size: 12px;
+    }
+}
+
+</style>
+
+<div class="container-fluid dashboard">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div>
+            <h2>🚗 Garage Dashboard</h2>
+            <p class="sub-text">Welcome, {{ request.user.username }}</p>
+        </div>
+
+        <div class="kpi-card text-center">
+            <small>TOTAL EARNINGS</small>
+            <h3>₹{{ total_earnings }}</h3>
+        </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="glass-card mb-4">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control"
+                    placeholder="Search customer..."
+                    value="{{ search_query }}">
+            </div>
+
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+
+            <div class="col-md-5 d-flex gap-2">
+                <button class="btn btn-primary flex-grow-1">Apply</button>
+                <a href="{% url 'export_bookings_csv' %}" class="btn btn-outline-light">Export</a>
+                <a href="{% url 'add_service' %}" class="btn btn-success">+ Add</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="custom-table">
+
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+
+                        <td data-label="Customer">
+                            <div class="customer-name">{{ booking.customer.username }}</div>
+                            <div class="customer-phone">{{ booking.customer.phone_number }}</div>
+                        </td>
+
+                        <td data-label="Service">
+                            {{ booking.service.category.name }}
+                        </td>
+
+                        <td data-label="Date">
+                            {{ booking.booking_date|date:"d M" }}
+                        </td>
+
+                        <td data-label="Status">
+                            <select class="status-select"
+                                onchange="location.href='/update-status/{{ booking.id }}/' + this.value">
+                                <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                        </td>
+
+                        <td data-label="Payment">
+                            {% if booking.is_paid %}
+                                <span class="badge-paid">Paid</span>
+                            {% else %}
+                                <span class="badge-unpaid">Unpaid</span>
+                            {% endif %}
+                        </td>
+
+                        <td data-label="Action">
+                            <button class="btn-contact">Contact</button>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- GRAPH -->
+    <div class="glass-card mt-4">
+        <h5>📊 Booking Analytics</h5>
+        <div class="chart-container">
+            <canvas id="bookingChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- DATA -->
+<script id="chart-labels" type="application/json">{{ chart_labels|safe }}</script>
+<script id="chart-counts" type="application/json">{{ chart_counts|safe }}</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const labels = JSON.parse(document.getElementById('chart-labels').textContent);
+const data = JSON.parse(document.getElementById('chart-counts').textContent);
+
+const ctx = document.getElementById('bookingChart').getContext('2d');
+
+const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+gradient.addColorStop(0, "rgba(77,171,255,0.7)");
+gradient.addColorStop(1, "rgba(77,171,255,0)");
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: data,
+            borderColor: "#60a5fa",
+            backgroundColor: gradient,
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { ticks: { color: "#cbd5e1" } },
+            y: { ticks: { color: "#cbd5e1" } }
+        }
+    }
+});
+</script>
+
+{% endblock %}

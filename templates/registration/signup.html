@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Navbar remove karva mate */
+    .navbar { display:none !important; }   
+    
+    html, body {
+        margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+    }
+
+    .signup-viewport {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                    url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1920');
+        background-size: cover; background-position: center;
+        display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+
+    .glass-card-full {
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 40px; border-radius: 30px; width: 90%; max-width: 450px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7); text-align: center;
+    }
+
+    .glass-card-full h1 { color: white; font-size: 2.5rem; font-weight: 800; margin-bottom: 5px; }
+    .glass-card-full p { color: rgba(255, 255, 255, 0.5); font-size: 0.95rem; margin-bottom: 25px; }
+
+    /* Have Django na form fields automatic style thase */
+    .input-container { margin-bottom: 12px; text-align: left; }
+    
+    .input-container input, .input-container select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 12px !important;
+        padding: 12px 20px !important;
+        color: white !important;
+        font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box;
+    }
+
+    .input-container input:focus {
+        border-color: #38bdf8 !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .btn-full-action {
+        background: #0061ff; color: white; border: none; width: 100%;
+        padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1.1rem;
+        text-transform: uppercase; margin-top: 15px; cursor: pointer; transition: 0.3s ease;
+    }
+
+    .btn-full-action:hover { transform: scale(1.02); box-shadow: 0 12px 24px rgba(0, 97, 255, 0.4); }
+    
+    .bottom-text { margin-top: 20px; color: rgba(255, 255, 255, 0.4); font-size: 0.85rem; }
+    .bottom-text a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+    .errorlist { color: #f87171; font-size: 0.8rem; list-style: none; padding: 0; margin: 5px 0; }
+</style>
+
+<div class="signup-viewport">
+    <div class="glass-card-full">
+        <h1>eGarage</h1>
+        <p>Join our premium vehicle network</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="input-container">
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="input-container">
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="input-container">
+                <select name="role" required>
+                    <option value="" disabled selected>Select Account Type</option>
+                    <option value="customer">Customer</option>
+                    <option value="provider">Service Provider</option>
+                </select>
+            </div>
+
+            <div class="input-container">
+                {{ form.password1 }}
+            </div>
+
+            <div class="input-container">
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+
+            <button type="submit" class="btn-full-action">SIGN UP</button>
+        </form>
+
+        <div class="bottom-text">
+            Already a member? <a href="{% url 'login' %}">Sign In Now</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

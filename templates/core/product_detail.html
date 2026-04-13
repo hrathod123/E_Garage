@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                {% if service.image %}
+                    <img src="{{ service.image.url }}" class="img-fluid w-100" style="height: 450px; object-fit: cover;">
+                {% else %}
+                    <img src="https://images.unsplash.com/featured/?car,repair&sig={{ service.id }}" class="img-fluid w-100" style="height: 450px; object-fit: cover;">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 ps-md-5">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'service_list' %}">Services</a></li>
+                    <li class="breadcrumb-item active">{{ service.category.name }}</li>
+                </ol>
+            </nav>
+            
+            <h1 class="display-5 fw-bold mb-3">{{ service.title }}</h1>
+            <p class="text-muted mb-4 fs-5">{{ service.description|default:"Get professional care for your vehicle with our certified experts." }}</p>
+            
+            <div class="mb-5">
+                <h3 class="text-success fw-bold">₹{{ service.price }}</h3>
+                <p class="small text-secondary">* Prices may vary based on vehicle model</p>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="{% url 'book_service' service.id %}" class="btn btn-success btn-lg py-3 fw-bold rounded-pill">
+                    Book Service Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

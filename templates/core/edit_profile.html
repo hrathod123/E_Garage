@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="edit-profile-fullscreen">
+    <div class="glass-card animate__animated animate__fadeInUp">
+        <div class="accent-bar"></div>
+        
+        <div class="card-content p-4 p-md-5">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-white">Account Settings</h2>
+                <p class="subtitle">Update your profile & security</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="modern-dark-form">
+                {% csrf_token %}
+                
+                <div class="profile-avatar-container text-center mb-4">
+                    <div class="position-relative d-inline-block">
+                        <div class="avatar-glow"></div>
+                        <div class="avatar-frame">
+                            {% if user.avatar %}
+                                <img id="image-preview" src="{{ user.avatar.url }}" alt="Profile Avatar">
+                            {% else %}
+                                <div id="image-placeholder" class="placeholder-box">
+                                    <i class="fas fa-user fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <label for="id_avatar" class="upload-icon-badge" title="Change Photo">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" name="avatar" id="id_avatar" class="d-none" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="fields-stack">
+                    {% for field in form %}
+                        {% if field.name != 'avatar' %}
+                        <div class="input-field-group mb-3">
+                            <label class="label-dark">{{ field.label }}</label>
+                            <div class="input-wrapper">
+                                {{ field }}
+                            </div>
+                            {% if field.errors %}
+                                <small class="text-danger-custom animate__animated animate__shakeX">
+                                    {{ field.errors.0 }}
+                                </small>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-3 mt-5">
+                    <button type="submit" class="btn btn-neon-blue py-3 fw-bold">
+                        Apply Changes
+                    </button>
+                    <a href="{% url 'service_list' %}" class="btn btn-outline-ghost py-3">
+                        Go Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 🌌 FULLSCREEN DARK BACKGROUND */
+    .edit-profile-fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        overflow-y: auto;
+    }
+
+    /* 🔥 GLASS-MORPHISM CARD */
+    .glass-card {
+        width: 100%;
+        max-width: 420px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .accent-bar {
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    }
+
+    .subtitle {
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    /* 🧑 AVATAR UI */
+    .avatar-frame {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        border: 3px solid #3b82f6;
+        padding: 4px;
+        background: #0f172a;
+        overflow: hidden;
+        position: relative;
+        z-index: 2;
+    }
+
+    .avatar-frame img, .placeholder-box {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .upload-icon-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #3b82f6;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 3px solid #111827;
+        z-index: 3;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .upload-icon-badge:hover { transform: scale(1.2) rotate(10deg); background: #06b6d4; }
+
+    /* ✨ DARK INPUTS */
+    .label-dark {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #64748b;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-left: 4px;
+    }
+
+    .modern-dark-form input {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-top: 6px;
+        transition: all 0.3s;
+    }
+
+    .modern-dark-form input:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        outline: none;
+        background: rgba(15, 23, 42, 0.8) !important;
+    }
+
+    /* 🔥 BUTTONS */
+    .btn-neon-blue {
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        transition: 0.3s;
+    }
+
+    .btn-neon-blue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+        color: white;
+    }
+
+    .btn-outline-ghost {
+        background: transparent;
+        border: 1px solid #334155;
+        color: #94a3b8;
+        border-radius: 12px;
+    }
+
+    .btn-outline-ghost:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+    }
+
+    .text-danger-custom { color: #f87171; font-size: 12px; }
+
+    /* Remove navbar/footer for full cover */
+    .navbar, footer { display: none !important; }
+</style>
+
+<script>
+    // Live Image Preview Update
+    document.getElementById('id_avatar').onchange = function (evt) {
+        const [file] = this.files;
+        if (file) {
+            const preview = document.getElementById('image-preview') || document.getElementById('image-placeholder');
+            if (preview.tagName === 'IMG') {
+                preview.src = URL.createObjectURL(file);
+            } else {
+                const img = document.createElement('img');
+                img.id = 'image-preview';
+                img.src = URL.createObjectURL(file);
+                img.className = 'rounded-circle';
+                img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+                preview.parentNode.replaceChild(img, preview);
+            }
+        }
+    }
+</script>
+{% endblock %}

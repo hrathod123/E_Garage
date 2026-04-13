@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+
+/* ===== GLOBAL ===== */
+body {
+    background: #0b0f14;
+    color: #e6edf3;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+}
+
+.page-header h2 {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.sub-text {
+    color: #9aa4af;
+    font-size: 14px;
+}
+
+/* ===== BUTTON ===== */
+.btn-modern {
+    background: #2563eb;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-modern:hover {
+    background: #1d4ed8;
+}
+
+/* ===== CARD ===== */
+.booking-card {
+    background: #111827;
+    border-radius: 14px;
+    border: 1px solid #1f2937;
+    overflow: hidden;
+}
+
+/* ===== TABLE ===== */
+.table-modern {
+    width: 100%;
+    color: #e6edf3;
+}
+
+/* HEADER */
+.table-modern thead {
+    background: #1f2937;
+}
+
+.table-modern th {
+    padding: 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: #cbd5e1;
+    letter-spacing: 0.5px;
+}
+
+/* ROW */
+.table-modern td {
+    padding: 16px;
+    border-top: 1px solid #1f2937;
+    vertical-align: middle;
+}
+
+/* HOVER */
+.table-modern tbody tr:hover {
+    background: #1a2230;
+}
+
+/* SERVICE */
+.service-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* DATE */
+.date-text {
+    color: #cbd5e1;
+}
+
+/* PRICE */
+.price {
+    color: #22c55e;
+    font-weight: 600;
+}
+
+/* ===== STATUS ===== */
+.badge-status {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* COLORS */
+.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.progress {
+    background: #dbeafe;
+    color: #1e3a8a;
+}
+
+.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* ===== ACTION BUTTON ===== */
+.btn-action {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+
+/* PAY */
+.btn-pay {
+    border: 1px solid #22c55e;
+    color: #22c55e;
+    background: transparent;
+}
+
+.btn-pay:hover {
+    background: #22c55e;
+    color: white;
+}
+
+/* INVOICE */
+.btn-invoice {
+    background: #22c55e;
+    color: #fff;
+}
+
+.btn-invoice:hover {
+    background: #16a34a;
+}
+
+/* ===== EMPTY ===== */
+.empty-box {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-box i {
+    font-size: 70px;
+    color: #6b7280;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+
+    .table-modern thead {
+        display: none;
+    }
+
+    .table-modern, 
+    .table-modern tbody, 
+    .table-modern tr, 
+    .table-modern td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-modern tr {
+        margin-bottom: 15px;
+        background: #111827;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .table-modern td {
+        text-align: right;
+        padding: 10px;
+        position: relative;
+    }
+
+    .table-modern td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        color: #9aa4af;
+        font-size: 12px;
+    }
+}
+
+</style>
+
+<div class="container mt-5">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h2>My Bookings</h2>
+            <p class="sub-text">Track your vehicle service status here.</p>
+        </div>
+
+        <a href="{% url 'service_list' %}" class="btn-modern">
+            + New Booking
+        </a>
+    </div>
+
+    {% if bookings %}
+
+    <!-- TABLE -->
+    <div class="booking-card">
+        <div class="table-responsive">
+            <table class="table-modern">
+
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Date & Time</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+
+                        <td data-label="Service">
+                            <div class="service-title">
+                                {{ booking.service.title }}
+                            </div>
+                        </td>
+
+                        <td data-label="Date">
+                            <span class="date-text">
+                                {{ booking.booking_date|date:"M d, Y H:i" }}
+                            </span>
+                        </td>
+
+                        <td data-label="Price">
+                            <span class="price">₹{{ booking.service.price }}</span>
+                        </td>
+
+                        <td data-label="Status">
+                            {% if booking.status == 'pending' %}
+                                <span class="badge-status pending">Pending</span>
+                            {% elif booking.status == 'in_progress' %}
+                                <span class="badge-status progress">In Progress</span>
+                            {% elif booking.status == 'completed' %}
+                                <span class="badge-status completed">Completed</span>
+                            {% endif %}
+                        </td>
+
+                        <td data-label="Action" class="text-end">
+
+                            {% if booking.status == 'completed' and not booking.is_paid %}
+                                <a href="{% url 'initiate_payment' booking.id %}" 
+                                   class="btn-action btn-pay">
+                                   Pay Now
+                                </a>
+
+                            {% elif booking.is_paid %}
+                                <a href="{% url 'download_invoice' booking.id %}" 
+                                   class="btn-action btn-invoice">
+                                   Invoice
+                                </a>
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+
+    <!-- EMPTY -->
+    <div class="empty-box">
+        <i class="bi bi-calendar-x"></i>
+        <h4>No bookings yet</h4>
+        <p class="sub-text">Explore our services to get started.</p>
+        <a href="{% url 'service_list' %}" class="btn-modern mt-3">
+            Browse Services
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
